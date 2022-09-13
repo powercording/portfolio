@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-import { Button, Grid } from "@mui/material";
+import { Button } from "@mui/material";
 import styled from "styled-components";
 import CreateModal from "../components/CreateModal";
 import ShowMyList from "../components/ShowMyList";
-import DnDropContext from "../components/DnDropContext";
 import InviteInput from "../components/InviteInput";
-import { Outlet, useNavigate } from "react-router-dom";
-import CreateNewFolderOutlinedIcon from "@mui/icons-material/CreateNewFolderOutlined";
-import Viewer from "../components/Viewer";
-import ReplyInput from "../components/ReplyInput";
+import DocumentList from "../components/DocumentList";
+import SubscriptionList from "../components/SubscriptionList";
+import DropBox from "../components/DropBox";
+import axios from "axios";
+import { getDidabara, REQUEST_ADDRESS } from "../config/APIs";
+import { didabaraState } from "../config/Atom";
+import { useSetRecoilState } from "recoil";
+import { useQuery } from "react-query";
 
-const Item = styled(Grid)`
-  /* border: 1px solid black; */
-`;
 const StyledButton = styled(Button)`
   && {
     width: 50%;
@@ -31,37 +31,18 @@ const StyledButton = styled(Button)`
 const ButtonMyList = styled(StyledButton)`
   && {
     background-color: ${(props) => (props.$mylist ? "#EAEBEC" : "#1c2027")};
-    color: ${(props) => (props.$mylist ? "#1c2027" : "#EAEBEC")};
+    color: ${(props) => (props.$mylist ? "#1c2027" : "#959697")};
     border: ${(props) => (props.$mylist ? "3px solid #1976D2" : "none")};
   }
 `;
 const ButtonJoinList = styled(StyledButton)`
   && {
     background-color: ${(props) => (!props.$mylist ? "#EAEBEC" : "#232830")};
-    color: ${(props) => (!props.$mylist ? "#1c2027" : "#EAEBEC")};
+    color: ${(props) => (!props.$mylist ? "#1c2027" : "#959697")};
     border: ${(props) => (!props.$mylist ? "3px solid #1976D2" : "none")};
   }
 `;
 
-const StyledGrid = styled(Grid)`
-  && {
-    background-color: #f1f3f5;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    height: 100%;
-    ::-webkit-scrollbar {
-      width: 1px;
-    }
-    ::-webkit-scrollbar-button {
-      width: 0;
-      height: 0;
-    }
-    ::-webkit-scrollbar-thumb {
-      border-radius: 3px;
-      background-color: gray;
-    }
-  }
-`;
 const FristGrid = styled.div`
   background-color: #f1f3f5;
   height: 100%;
@@ -75,14 +56,38 @@ const SecondGrid = styled.div`
 `;
 const Container = styled.div`
   display: grid;
+  overflow-y: scroll;
+  overflow-x: hidden;
   grid-template-columns: 15% 85%;
   height: calc(100% - 45px);
+  ::-webkit-scrollbar {
+    width: 1px;
+  }
+  ::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: gray;
+  }
 `;
 
 function DashBoard() {
   const [makeCategory, setMakeCategory] = useState(false);
   const [showList, setShowList] = useState(true);
   const [invite, setInvite] = useState(false);
+  const setDidabara = useSetRecoilState(didabaraState);
+
+  const { isLoading } = useQuery("didabara", getDidabara, {
+    refetchOnWindowFocus: false,
+    retry: false,
+    onSuccess: (data) => {
+      setDidabara((prev) => {
+        return { ...prev, create: data.data };
+      });
+    },
+  });
 
   const menuSelect = (e) => {
     if (e.target.value === "myList") {
@@ -91,6 +96,16 @@ function DashBoard() {
     if (e.target.value === "joinList") {
       setShowList(false);
     }
+  };
+
+  const fetche = () => {
+    axios
+      .get(REQUEST_ADDRESS + "categoryItem/myitemlist", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((res) => console.log(res));
   };
 
   return (
@@ -109,7 +124,7 @@ function DashBoard() {
           </ButtonMyList>
         </div>
 
-        <div>{showList ? <ShowMyList /> : <DnDropContext />}</div>
+        <div>{showList ? <ShowMyList /> : <DropBox />}</div>
         <div>
           {showList ? (
             <Button
@@ -137,7 +152,12 @@ function DashBoard() {
       <SecondGrid style={{ position: "relative" }}>
         {makeCategory && <CreateModal setShowing={setMakeCategory} />}
         {invite && <InviteInput setInvite={setInvite} />}
-        <Outlet />
+        {/* <Outlet /> */}
+        {showList ? (
+          <DocumentList loading={isLoading} />
+        ) : (
+          <SubscriptionList loading={isLoading} />
+        )}
       </SecondGrid>
     </Container>
   );

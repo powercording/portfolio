@@ -5,7 +5,12 @@ import LoginSharpIcon from "@mui/icons-material/LoginSharp";
 import LogoutSharpIcon from "@mui/icons-material/LogoutSharp";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
-import { loginState, userState } from "../config/Atom";
+import {
+  categoryItem,
+  didabaraState,
+  loginState,
+  userState,
+} from "../config/Atom";
 import styled from "styled-components";
 
 const StyledButton = styled(Button)`
@@ -39,6 +44,8 @@ function NavigationBar() {
    * user 의 defautl 값인 id:null 이 된다.
    */
   const userLogout = useResetRecoilState(userState);
+  const resetDocument = useResetRecoilState(didabaraState);
+  const resetItemList = useResetRecoilState(categoryItem);
 
   /** 이벤트에 따라 유저의 상태를 관리하기 위한 Recoil */
   const user = useRecoilValue(userState);
@@ -63,6 +70,8 @@ function NavigationBar() {
             onClick={() => {
               localStorage.removeItem("token");
               localStorage.removeItem("user");
+              resetItemList();
+              resetDocument();
               userLogout();
               navi("/");
             }}

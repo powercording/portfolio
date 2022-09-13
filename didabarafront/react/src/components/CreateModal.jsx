@@ -6,7 +6,7 @@ import Pallet from "./Pallet";
 import { REQUEST_ADDRESS } from "../config/APIs";
 import ModalPopUp from "./ModalPopUp";
 import { useSetRecoilState } from "recoil";
-import { myDocumentState } from "../config/Atom";
+import { didabaraState } from "../config/Atom";
 
 const StyledForm = styled.form`
   display: flex;
@@ -91,7 +91,7 @@ const InviteCode = styled.input`
 `;
 function CreateModal({ setShowing }) {
   const [inviteCode, setInviteCode] = useState("");
-  const setMyDocumetnState = useSetRecoilState(myDocumentState);
+  const setDidabara = useSetRecoilState(didabaraState);
   const imgRef = useRef();
 
   const copyInviteCode = (e) => {
@@ -144,8 +144,10 @@ function CreateModal({ setShowing }) {
         },
       })
       .then((res) => {
-        console.log(res.data);
-        setMyDocumetnState((prev) => [...prev, { ...res.data }]);
+        setDidabara((prev) => {
+          const before = prev.create;
+          return { ...prev, create: [...before, res.data] };
+        });
         setInviteCode(res.data.inviteCode);
       })
       .catch((err) => console.log(err));

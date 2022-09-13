@@ -4,7 +4,6 @@ import {
   Button,
   Divider,
   Grid,
-  Paper,
   TextField,
   Typography,
 } from "@mui/material";
@@ -159,7 +158,6 @@ function FindInfo() {
           maxWidth="lg"
           style={{ marginTop: "3%", backgroundColor: "white" }}
         >
-          <Paper>
           <Grid container justifyContent="center">
             <Container maxWidth="xs" justifyContent="center">
               <Grid container justifyContent="center">
@@ -276,7 +274,6 @@ function FindInfo() {
               </Grid>
             </Container>
           </Grid>
-          </Paper>
         </Container>
       </Background>
     </>

@@ -12,15 +12,15 @@ import Mypage from "./pages/Mypage";
 import PersonalInfo from "./pages/PersonalInfo";
 import NavigationBar from "./components/NavigationBar";
 import MypageMain from "./pages/MypageMain";
+import FindInfo from "./pages/FindInfo";
+import SubscriptionMain from "./pages/SubscriptionMain";
 import Loginform from "./components/Loginform";
 import CreateModal from "./components/CreateModal";
 import AvatarPickerModal from "./components/AvatarPickerModal";
 import { useQuery } from "react-query";
 import { getUserData } from "./config/APIs";
 import DocumentList from "./components/DocumentList";
-import FindInfo from "./pages/FindInfo";
-import SubscriptionMain from "./pages/SubscriptionMain";
-import DeleteAccount from "./pages/DeleteAccount";
+import ViewContainer from "./components/ViewContainer";
 
 function Router() {
   const isLogin = useRecoilValue(loginState);
@@ -54,6 +54,7 @@ function Router() {
             <Route path="/dashboard" element={<DashBoard />}>
               <Route path="/dashboard/:document" element={<DocumentList />} />
             </Route>
+            <Route path="/dashboard/pages/:docId" element={<ViewContainer />} />
             <Route path="/dashboard/create" element={<CreateModal />} />
 
             <Route path="/mypage" element={<Mypage />}>
@@ -65,7 +66,6 @@ function Router() {
             {/* </>
         )} */}
             <Route path="/" element={<Home />} />
-            <Route path="/deleted" element={<DeleteAccount />} />
           </Routes>
         </>
       )}

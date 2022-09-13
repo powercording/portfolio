@@ -1,9 +1,9 @@
 import React from "react";
 import { useQuery } from "react-query";
-import { useRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { getMyList } from "../config/APIs";
-import { myDocumentState } from "../config/Atom";
+import { getDidabaraItems } from "../config/APIs";
+import { didabaraItemState, didabaraState } from "../config/Atom";
 import MyList from "./MyList";
 
 const StyledGrid = styled.div`
@@ -25,32 +25,30 @@ const StyledGrid = styled.div`
 `;
 
 function ShowMyList() {
-  const [myDocumentList, setList] = useRecoilState(myDocumentState);
+  const didabara = useRecoilValue(didabaraState);
+  const setDidabaraItems = useSetRecoilState(didabaraItemState);
 
-  const { isLoading } = useQuery("myDocumentList", getMyList, {
+  const { isLoading } = useQuery("getDidabiarItems", getDidabaraItems, {
     refetchOnWindowFocus: false,
-    retry: 0,
+    retry: false,
     onSuccess: (data) => {
-      console.log("myDocumentList is....:", data);
-      setList(data.data);
+      setDidabaraItems([...data.data.resList]);
     },
   });
 
   return (
     <StyledGrid>
-      {isLoading
-        ? null
-        : myDocumentList.map((list) => (
+      {didabara?.create
+        ? didabara.create.map((list, idx) => (
             <MyList
-              key={list.id}
+              key={idx}
               title={list.title}
               content={list.content}
               imgSrc={list.profileImageUrl}
               id={list.id}
-              code={list.inviteCode}
-              host={list.host}
             />
-          ))}
+          ))
+        : null}
     </StyledGrid>
   );
 }

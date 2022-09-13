@@ -14,13 +14,11 @@ import {
   MenuItem,
   IconButton,
   Tooltip,
-  Input,
-  Alert,
 } from "@mui/material";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, Controller } from "react-hook-form";
-import { useRecoilState, useResetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import { userState } from "../config/Atom";
 import styled from "styled-components";
 import AvatarPicker from "../components/AvatarPicker";
@@ -28,9 +26,6 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { Box } from "@mui/system";
 import axios from "axios";
 import { REQUEST_ADDRESS } from "../config/APIs";
-import { useNavigate } from "react-router-dom";
-import WarningIcon from "@mui/icons-material/Warning";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 /** 스타일 컴포넌트 */
 const StyledButton = styled(Button)`
@@ -38,12 +33,6 @@ const StyledButton = styled(Button)`
     width: 80%;
     color: black;
     border: black solid 1px;
-  }
-`;
-
-const StyledBtn = styled(Button)`
-  && {
-    width: 100%;
   }
 `;
 
@@ -137,8 +126,6 @@ function PersonalInfo() {
   } = useForm({ resolver: yupResolver(validationPwd) });
 
   const [user, setUser] = useRecoilState(userState);
-  const userLogout = useResetRecoilState(userState);
-  const navi = useNavigate();
   let date = user.modified_date + "";
   let dateResult = date.slice(0, 10);
 
@@ -196,39 +183,8 @@ function PersonalInfo() {
       .catch((err) => console.log(err));
   };
 
-  /**
-   * 탈퇴
-   */
-  const [deleteAlert, setDeleteAlert] = useState(false);
-
-  const deleteConfirm = (e) => {
-    setDeleteAlert(true);
-  };
-
-  const deleteAccount = (e) => {
-    e.preventDefault();
-    const data = new FormData(e.target);
-    const password = data.get("password");
-
-    axios
-      .delete(REQUEST_ADDRESS + "auth/user", {
-        data: { password },
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((res) => alert(res.data))
-      .catch((res) => alert(res.data));
-  };
-
-  const [showDeleteForm, setShowDeleteForm] = useState(false);
-
-  const openDeleteForm = () => {
-    setShowDeleteForm((prev) => !prev);
-  };
-
   return (
-    <div>
+    <>
       <Container>
         <Grid style={{ margin: "3%" }}>
           <Typography variant="h4">개인 정보</Typography>
@@ -397,81 +353,8 @@ function PersonalInfo() {
             </StyledGrid2>
           </StyledGrid>
         </StyledPaper>
-        <Paper elevation={3} style={{ marginTop: "3%", padding: "20px" }}>
-          <Container maxWidth="lg">
-            <Grid container>
-              <Grid item xs={12}>
-                <Typography variant="h6">Delete Account</Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <StyledBox sx={{ display: "flex", alignItems: "flex-start" }}>
-                  <Typography
-                    variant="subtitle2"
-                    mt={1}
-                    mb={1}
-                    mr={55}
-                    style={{ color: "#CD201F" }}
-                  >
-                    <WarningIcon fontSize="xs" sx={{ mr: 0.5 }} />
-                    탈퇴시 모든 카테고리와 문서가 지워집니다.
-                  </Typography>
-                  <IconButton onClick={openDeleteForm}>
-                    <ChevronRightIcon fontSize="large" sx={{ my: -0.5 }} />
-                  </IconButton>
-                </StyledBox>
-                <Divider />
-              </Grid>
-              {showDeleteForm && (
-                <Grid item xs={12} mt={1}>
-                  <Typography variant="subtitle2">
-                    계속하려면 먼저 본인임을 인증하세요.
-                  </Typography>
-                  <form onSubmit={deleteAccount}>
-                    <Grid container mt={1}>
-                      <Grid item xs={6}>
-                        <TextField
-                          style={{ width: "80%" }}
-                          name="password"
-                          label="비밀번호"
-                          variant="standard"
-                          type="password"
-                        />
-                        <Input style={{ display: "none" }} />
-                      </Grid>
-                      <Grid item xs={6} mt={1}>
-                        <StyledButton onClick={deleteConfirm}>
-                          확인
-                        </StyledButton>
-                      </Grid>
-                      <Grid xs={12}>
-                        {deleteAlert && (
-                          <div style={{ marginTop: "5px" }}>
-                            <Alert
-                              severity="info"
-                              action={
-                                <Button
-                                  type="submit"
-                                  color="inherit"
-                                  size="small"
-                                >
-                                  탈퇴하기
-                                </Button>
-                              }
-                            >
-                              정말 탈퇴하시겠습니까?
-                            </Alert>
-                          </div>
-                        )}
-                      </Grid>
-                    </Grid>
-                  </form>
-                </Grid>
-              )}
-            </Grid>
-          </Container>
-        </Paper>
       </Container>
-    </div>
+    </>
   );
 }
 

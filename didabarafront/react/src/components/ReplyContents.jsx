@@ -1,22 +1,47 @@
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
-
+import axios from "axios";
 import React from "react";
+import styled from "styled-components";
+import { REQUEST_ADDRESS } from "../config/APIs";
 
-function ReplyContents() {
-  //로직 작성 해야함
-  const deleteReply = () => {};
+const ReplyBox = styled.div`
+  padding: 0px 10px;
+`;
+const Wrapper = styled.div`
+  border-bottom: 1px solid grey;
+  padding: 0px 10px;
+`;
+const WriterAndDate = styled.div`
+  display: grid;
+  grid-template-columns: 60% 20% 20%;
+`;
+const TextBox = styled.div`
+  width: 100%;
+  overflow: auto;
+  word-break: break-all;
+`;
+
+function ReplyContents({ reply }) {
+  const deleteReply = () => {
+    axios
+      .delete(REQUEST_ADDRESS + `categoryItemReply/delete/${reply.id}`, {
+        headers: {
+          Autorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((res) => {
+        console.log(reply.id);
+        console.log(res);
+      })
+      .catch((err) => console.log(reply.id));
+  };
 
   return (
-    <div style={{ padding: "0px 10px" }}>
-      <div style={{ borderBottom: "1px solid grey", padding: "0px 10px" }}>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "60% 20% 20%",
-          }}
-        >
-          <h5 style={{ lineHeight: "50%" }}>Writer</h5>
-          <p style={{ justifySelf: "end" }}>date</p>
+    <ReplyBox>
+      <Wrapper>
+        <WriterAndDate>
+          <h5 style={{ lineHeight: "50%" }}>{reply.writer}</h5>
+          <p style={{ justifySelf: "end" }}>{reply.date}</p>
           <DeleteForeverOutlinedIcon
             style={{
               justifySelf: "end",
@@ -25,11 +50,12 @@ function ReplyContents() {
             }}
             onClick={deleteReply}
           />
-        </div>
-
-        <p style={{ lineHeight: "50%" }}>Contents</p>
-      </div>
-    </div>
+        </WriterAndDate>
+        <TextBox>
+          <p style={{ lineHeight: "100%" }}>{reply.content}</p>
+        </TextBox>
+      </Wrapper>
+    </ReplyBox>
   );
 }
 
