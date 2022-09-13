@@ -1,9 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 import { Paper, Avatar } from "@mui/material";
-import { Draggable } from "react-beautiful-dnd";
-import { useRecoilValue } from "recoil";
-import { userState } from "../config/Atom";
+import axios from "axios";
+import { REQUEST_ADDRESS } from "../config/APIs";
+import { myListOrJoinList } from "../config/Atom";
+import { useSetRecoilState } from "recoil";
+import { useNavigate } from "react-router-dom";
 
 const StyledPaper = styled(Paper)`
   && {
@@ -56,29 +58,39 @@ const H5 = styled.h5`
   margin-block-end: 0.3rem;
 `;
 
-function Profile({ img, username, title, text, idx, id }) {
-  const user = useRecoilValue(userState);
+function Profile({ img, username, title, text, id }) {
+  const navi = useNavigate();
+  const setList = useSetRecoilState(myListOrJoinList);
+
+  const goCategory = () => {
+    console.log("getting my item list of categories...");
+    setList(id);
+    navi(`/dashboard/${id}`);
+  };
+
+  const getPaper = () => {
+    axios
+      .get(REQUEST_ADDRESS + `categoryItem/list/` + id, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((res) => console.log(res.data));
+  };
+
   return (
-    <Draggable key={id} draggableId={title} index={idx}>
-      {(magic) => (
-        <StyledPaper
-          ref={magic.innerRef}
-          {...magic.dragHandleProps}
-          {...magic.draggableProps}
-        >
-          <Wrapper>
-            <ImgBlock>
-              <Img alt="userImage" src={""} />
-              <H4>{username}</H4>
-            </ImgBlock>
-            <InfoLine>
-              <H4 style={{ marginLeft: "5px" }}>{title}</H4>
-              <H5 style={{ marginLeft: "5px" }}>{text}</H5>
-            </InfoLine>
-          </Wrapper>
-        </StyledPaper>
-      )}
-    </Draggable>
+    <StyledPaper onClick={goCategory}>
+      <Wrapper>
+        <ImgBlock>
+          <Img alt="Background Image" src={img} />
+          <H4>{username}</H4>
+        </ImgBlock>
+        <InfoLine>
+          <H4 style={{ marginLeft: "5px" }}>{title}</H4>
+          <H5 style={{ marginLeft: "5px" }}>{text}</H5>
+        </InfoLine>
+      </Wrapper>
+    </StyledPaper>
   );
 }
 

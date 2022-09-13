@@ -1,11 +1,8 @@
-import axios from "axios";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
-
 import styled from "styled-components";
-import { REQUEST_ADDRESS } from "../config/APIs";
-import { categoryIdState, categoryItem } from "../config/Atom";
+import { myListOrJoinList } from "../config/Atom";
 
 const Container = styled.div`
   border-radius: 0;
@@ -42,29 +39,14 @@ const StyledSpan = styled.span`
   margin: 5px;
 `;
 
-function MyList({ title, content, imgSrc, id, code, host }) {
+function MyList({ title, content, imgSrc, id }) {
   const navi = useNavigate();
-  const setCategoryItems = useSetRecoilState(categoryItem);
+  const setList = useSetRecoilState(myListOrJoinList);
 
   const goCategory = () => {
     console.log("getting my item list of categories...");
-
-    axios
-      .get(REQUEST_ADDRESS + `categoryItem/list/${id}`, {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((res) => {
-        setCategoryItems(res.data.resList);
-        console.log(res.data.resList);
-        navi(`/dashboard/${id}`, {
-          state: {
-            inviteCode: code,
-            host: host,
-          },
-        });
-      });
+    setList(id);
+    navi(`/dashboard/${id}`);
   };
 
   return (

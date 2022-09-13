@@ -27,10 +27,7 @@ export const getUserData = () => {
       });
   }
 };
-
-export const getMyList = () => {
-  console.log("getting my create list from server...");
-
+export const getDidabara = () => {
   return axios.get(REQUEST_ADDRESS + "category/myList", {
     headers: {
       Authorization: "Bearer " + localStorage.getItem("token"),
@@ -38,10 +35,32 @@ export const getMyList = () => {
   });
 };
 
-export const getItemList = (id) => {
-  console.log("item list loading...");
+export const getDidabaraJoin = () => {
+  return axios.get(REQUEST_ADDRESS + "subscriber/myJoinList", {
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("token"),
+    },
+  });
+};
 
-  return axios.get(REQUEST_ADDRESS + `categoryItem/list/${id}`, {
+export const getDidabaraItems = () => {
+  return axios.get(REQUEST_ADDRESS + "categoryItem/myitemlist", {
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("token"),
+    },
+  });
+};
+
+export const getDidabaraJoinItems = () => {
+  return axios.get(REQUEST_ADDRESS + "categoryItem/allitemlist", {
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("token"),
+    },
+  });
+};
+
+export const getItemReply = (id) => {
+  return axios.get(REQUEST_ADDRESS + `categoryItemReply/list/${id}`, {
     headers: {
       Authorization: "Bearer " + localStorage.getItem("token"),
     },
