@@ -12,13 +12,15 @@ import React from "react";
 import { useState } from "react";
 
 const columns = [
-  { id: "title", label: "이름", minWidth: 170 },
+  { id: "title", label: "이름", minWidth: 100 },
   { id: "count", label: "참가자수", minWidth: 50 },
   { id: "date", label: "개설일", minWidth: 70 },
   { id: "inviteCode", label: "초대코드", minWidth: 70 },
 ];
 
-function createData(title, count, date, inviteCode) {}
+function createData(title, count, date, inviteCode) {
+  return { title, count, date, inviteCode };
+}
 
 const rows = [
   createData("카테고리1", 100, "2022-09-13", "AA1234"),
@@ -40,37 +42,37 @@ export default function MyCategoryList() {
   };
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden" }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {columns.label}
-                </TableCell>
-              ))}
+    <TableContainer component={Paper}>
+      <Table stickyHeader aria-label="sticky table">
+        <TableHead>
+          <TableRow>
+            {columns.map((column) => (
+              <TableCell
+                key={column.id}
+                style={{
+                  minWidth: column.minWidth,
+                  backgroundColor: "#f5f5f5",
+                }}
+              >
+                {column.label}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rows.map((row) => (
+            <TableRow
+              key={row.title}
+              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            >
+              <TableCell>{row.title}</TableCell>
+              <TableCell>{row.count}</TableCell>
+              <TableCell>{row.date}</TableCell>
+              <TableCell>{row.inviteCode}</TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.count}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return <TableCell key={columns.id}></TableCell>;
-                    })}
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Paper>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 }
