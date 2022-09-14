@@ -6,7 +6,8 @@ import Pallet from "./Pallet";
 import { REQUEST_ADDRESS } from "../config/APIs";
 import ModalPopUp from "./ModalPopUp";
 import { useSetRecoilState } from "recoil";
-import { didabaraState } from "../config/Atom";
+import { didabaraState, myListOrJoinList } from "../config/Atom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const StyledForm = styled.form`
   display: flex;
@@ -92,7 +93,13 @@ const InviteCode = styled.input`
 function CreateModal({ setShowing }) {
   const [inviteCode, setInviteCode] = useState("");
   const setDidabara = useSetRecoilState(didabaraState);
+  const setList = useSetRecoilState(myListOrJoinList);
+  const navi = useNavigate();
   const imgRef = useRef();
+
+  const location = useLocation();
+
+  console.log(location);
 
   const copyInviteCode = (e) => {
     e.target.select();
@@ -149,6 +156,8 @@ function CreateModal({ setShowing }) {
           return { ...prev, create: [...before, res.data] };
         });
         setInviteCode(res.data.inviteCode);
+        setList(res.data.id);
+        navi(`/dashboard/myboard/${res.data.id}`);
       })
       .catch((err) => console.log(err));
   };

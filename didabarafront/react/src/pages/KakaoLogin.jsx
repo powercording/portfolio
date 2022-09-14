@@ -34,7 +34,7 @@ function KakaoLogin() {
         })
         .then((response) => {
           setUser(response.data);
-          navi("/");
+          navi("/dashboard");
         });
     });
   }, []);

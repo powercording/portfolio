@@ -1,10 +1,16 @@
 import axios from "axios";
 import React, { useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useMatch, useNavigate, useParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { REQUEST_ADDRESS } from "../config/APIs";
-import { didabaraSelector, didabaraState, menuState } from "../config/Atom";
+import { getDidabaraItems, REQUEST_ADDRESS } from "../config/APIs";
+import {
+  didabaraItemState,
+  didabaraSelector,
+  didabaraState,
+  menuState,
+  myListOrJoinList,
+} from "../config/Atom";
 import CreateItem from "./CreateItem";
 import ItemMenu from "./ItemMenu";
 import Skeleton from "../items/Skeleton";
@@ -186,7 +192,9 @@ function DocumentList({ loading }) {
   const setMenu = useSetRecoilState(menuState);
   const filteredList = useRecoilValue(didabaraSelector);
   const [didabara, setDidabara] = useRecoilState(didabaraState);
-  const [makeItem, setMakeItem] = useState();
+  const setList = useSetRecoilState(myListOrJoinList);
+  const setDidabaraItems = useSetRecoilState(didabaraItemState);
+  // const [makeItem, setMakeItem] = useState();
   const [openMenu, setOpenMenu] = useState();
   const indicatorRef = useRef();
   const listingRef = useRef();
@@ -195,6 +203,12 @@ function DocumentList({ loading }) {
   const itemRef = useRef();
   const navi = useNavigate();
   const param = useParams();
+
+  const currentDocument = didabara.create.find(
+    (page) => page.id == param.document
+  );
+
+  console.log(currentDocument);
 
   const hasInvite = didabara?.create?.find((list) => {
     return list.id == param.document;
@@ -206,8 +220,15 @@ function DocumentList({ loading }) {
     if (!loading) {
       listingRef.current.click();
     }
-    if (loading) {
-      listingRef.current.click();
+  }, []);
+
+  useEffect(() => {
+    if (!didabara.create.length) {
+      return;
+    }
+    if (didabara?.create.length) {
+      setList(didabara.create[0].id);
+      navi(`/dashboard/myboard/${didabara?.create[0].id}`);
     }
   }, []);
 
@@ -227,10 +248,17 @@ function DocumentList({ loading }) {
           },
         })
         .then((res) => {
-          navi("/dashboard");
           setDidabara((prev) => {
             return { ...prev, create: [...res.data.resList] };
           });
+          getDidabaraItems().then((res) => {
+            setDidabaraItems(res.data.resList);
+          });
+
+          if (didabara.create.length) {
+            setList(didabara.create[0].id);
+            navi(`/dashboard/myboard/${didabara.create[0].id}`);
+          }
         })
         .catch((err) => console.log(err));
     }
@@ -315,6 +343,7 @@ function DocumentList({ loading }) {
       ) : (
         <>
           <Container>
+            <h1>{currentDocument?.title}</h1>
             <MenuBar>
               <List onClick={handleMenuState}>
                 <Item ref={listingRef}>Listing</Item>

@@ -2,9 +2,13 @@ import React, { useRef } from "react";
 import ModalPopUp from "./ModalPopUp";
 import styled from "styled-components";
 import axios from "axios";
-import { REQUEST_ADDRESS } from "../config/APIs";
+import { getDidabaraJoinItems, REQUEST_ADDRESS } from "../config/APIs";
 import { useSetRecoilState } from "recoil";
-import { didabaraState } from "../config/Atom";
+import {
+  didabaraItemState,
+  didabaraState,
+  myListOrJoinList,
+} from "../config/Atom";
 import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
@@ -69,6 +73,8 @@ const CloseButton = styled.button`
 function InviteInput({ setInvite }) {
   const inputRef = useRef();
   const setDidabara = useSetRecoilState(didabaraState);
+  const setDidabaraItems = useSetRecoilState(didabaraItemState);
+  const setList = useSetRecoilState(myListOrJoinList);
   const navi = useNavigate();
 
   const closeWindow = () => {
@@ -93,9 +99,13 @@ function InviteInput({ setInvite }) {
         setDidabara((prev) => {
           return { ...prev, join: [...res.data] };
         });
-
-        closeWindow();
-        navi("/dashboard");
+        const newDoc = res.data.pop();
+        getDidabaraJoinItems().then((res) => {
+          setDidabaraItems(res.data.resList);
+          setList(newDoc.id);
+          closeWindow();
+          navi(`/dashboard/publicboard/${newDoc.id}`);
+        });
       })
       .catch((err) => console.log(err));
   };

@@ -63,7 +63,7 @@ function Profile({ img, username, title, text, id }) {
   const goCategory = () => {
     console.log("getting my item list of categories...");
     setList(id);
-    navi(`/dashboard/${id}`, {
+    navi(`/dashboard/publicboard/${id}`, {
       state: {
         id: id,
       },

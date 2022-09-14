@@ -2,10 +2,16 @@ import axios from "axios";
 import React, { useRef } from "react";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { REQUEST_ADDRESS } from "../config/APIs";
-import { didabaraSelector, didabaraState, menuState } from "../config/Atom";
+import { getDidabaraJoinItems, REQUEST_ADDRESS } from "../config/APIs";
+import {
+  didabaraItemState,
+  didabaraSelector,
+  didabaraState,
+  menuState,
+  myListOrJoinList,
+} from "../config/Atom";
 
 const Container = styled.div`
   width: 100% - 40px;
@@ -99,14 +105,15 @@ const Nullsign = styled.span`
 `;
 function SubscriptionList({ loading }) {
   const filteredList = useRecoilValue(didabaraSelector);
-  const setDidabara = useSetRecoilState(didabaraState);
+  const [didabara, setDidabara] = useRecoilState(didabaraState);
+  const setDidabataItems = useSetRecoilState(didabaraItemState);
+  const setList = useSetRecoilState(myListOrJoinList);
   const setMenu = useSetRecoilState(menuState);
   const location = useLocation();
   const navi = useNavigate();
   const indicatorRef = useRef();
   const listingRef = useRef();
 
-  console.log(location);
   const handleMenuState = (e) => {
     setMenu(e.target.innerText);
     indicatorRef.current.style.left = e.target.offsetLeft + "px";
@@ -116,6 +123,16 @@ function SubscriptionList({ loading }) {
   useEffect(() => {
     if (!loading) {
       listingRef.current.click();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!didabara.join.length) {
+      return;
+    }
+    if (didabara?.join.length) {
+      navi(`/dashboard/publicboard/${didabara?.join[0].id}`);
+      setList(didabara.join[0].id);
     }
   }, []);
 
@@ -130,11 +147,19 @@ function SubscriptionList({ loading }) {
           },
         })
         .then((res) => {
-          console.log(res);
           setDidabara((prev) => {
             return { ...prev, join: res.data };
           });
-        });
+          getDidabaraJoinItems().then((res) => {
+            setDidabataItems(res.data.resList);
+          });
+          if (didabara?.join.length) {
+            setList(didabara.join[0].id);
+            navi(`/dashboard/publicboard/${didabara.join[0].id}`);
+          }
+          navi("/dashboard/publicboard");
+        })
+        .catch((err) => console.log(err));
     }
   };
 
