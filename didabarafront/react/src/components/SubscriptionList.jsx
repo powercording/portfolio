@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useRef } from "react";
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
@@ -103,6 +104,7 @@ function SubscriptionList({ loading }) {
   const location = useLocation();
   const navi = useNavigate();
   const indicatorRef = useRef();
+  const listingRef = useRef();
 
   console.log(location);
   const handleMenuState = (e) => {
@@ -111,26 +113,29 @@ function SubscriptionList({ loading }) {
     indicatorRef.current.style.width = e.target.offsetWidth + "px";
   };
 
+  useEffect(() => {
+    if (!loading) {
+      listingRef.current.click();
+    }
+  }, []);
+
   const cancleSubscribtion = () => {
-    axios
-      .delete(REQUEST_ADDRESS + `subscriber/delete/${location.state.id}`, {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((res) => {
-        setDidabara((prev) => {
-          const index = prev.join.findIndex(
-            (item) => item.id == location.state.id
-          );
-          console.log(prev);
-          console.log(index);
-          const beforData = [...prev.join];
-          beforData.splice(index, 1);
-          return { ...prev, join: [...beforData.splice(index, 1)] };
+    const bool = window.confirm("해당 커뮤니티 구독을 취소하시겠습니까");
+
+    if (bool) {
+      axios
+        .delete(REQUEST_ADDRESS + `subscriber/delete/${location.state.id}`, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          setDidabara((prev) => {
+            return { ...prev, join: res.data };
+          });
         });
-        console.log(res);
-      });
+    }
   };
 
   return (
@@ -138,7 +143,7 @@ function SubscriptionList({ loading }) {
       <Container>
         <MenuBar>
           <List onClick={handleMenuState}>
-            <Item>Listing</Item>
+            <Item ref={listingRef}>Listing</Item>
             <Item>Out Dated</Item>
             <Item>All List</Item>
           </List>

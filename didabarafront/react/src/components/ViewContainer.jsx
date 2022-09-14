@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useQuery } from "react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { getItemReply, REQUEST_ADDRESS } from "../config/APIs";
+import { getCheckedList, getItemReply, REQUEST_ADDRESS } from "../config/APIs";
+import CheckedList from "./CheckedList";
 import ReplyContents from "./ReplyContents";
 import ReplyInput from "./ReplyInput";
 import Viewer from "./Viewer";
@@ -99,10 +100,24 @@ const ShiftMenu = styled.button`
   align-items: center; /* 가로 - 중앙으로 */
   justify-content: flex-start; /* 세로 - 상단으로 */
 `;
-
+const CheckedViewer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  height: 400px;
+  border-radius: 15px;
+  background-color: rgba(0, 0, 0, 0.2);
+`;
+const StyledSpan = styled.span`
+  margin-top: 15px;
+  margin-bottom: 15px;
+  color: black;
+`;
 function ViewContainer() {
   const navi = useNavigate();
   const [content, setContent] = useState(true);
+  const [checkeList, setCheckedList] = useState([]);
   const location = useLocation();
   const item = location.state.item;
 
@@ -110,14 +125,31 @@ function ViewContainer() {
 
   const [replyList, setReplyList] = useState([]);
 
-  const { isLoading } = useQuery("reply", () => getItemReply(item.id), {
-    refetchOnWindowFocus: false,
-    retry: false,
-    onSuccess: (data) => {
-      console.log("이페이지의 리플라이:", data.data);
-      setReplyList(data.data);
-    },
-  });
+  const { isLoading: replyLoading } = useQuery(
+    "reply",
+    () => getItemReply(item.id),
+    {
+      refetchOnWindowFocus: false,
+      retry: false,
+      onSuccess: (data) => {
+        console.log("이페이지의 리플라이:", data.data);
+        setReplyList(data.data);
+      },
+    }
+  );
+
+  const { isLoading: CheckedLoading } = useQuery(
+    "check",
+    () => getCheckedList(item.id),
+    {
+      refetchOnWindowFocus: false,
+      retry: false,
+      onSuccess: (data) => {
+        setCheckedList(data.data);
+        console.log("체크: ", data);
+      },
+    }
+  );
 
   const check = () => {
     axios
@@ -126,21 +158,11 @@ function ViewContainer() {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       })
-      .then((res) => console.log(res));
+      .then((res) => console.log("체크: ", res));
   };
 
   const changeContent = () => {
     setContent((prev) => !prev);
-  };
-
-  const getCheck = () => {
-    axios
-      .get(REQUEST_ADDRESS + `checked/list/item/${item.id}`, {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((res) => console.log(res));
   };
 
   return (
@@ -153,15 +175,21 @@ function ViewContainer() {
         >
           뒤로가기
         </StyledBottun>
-
-        {content ? (
-          <Box>
-            <h4>{item.title}</h4>
-            <p>{item.content}</p>
-          </Box>
-        ) : (
-          <button onClick={getCheck}>get!</button>
-        )}
+        <div style={{ padding: "10px" }}>
+          {content ? (
+            <Box>
+              <h4>{item.title}</h4>
+              <p>{item.content}</p>
+            </Box>
+          ) : (
+            <CheckedViewer>
+              <StyledSpan>이 페이지를 확인했습니다.</StyledSpan>
+              {checkeList.map((list) => {
+                return <CheckedList nickname={list.nickname} />;
+              })}
+            </CheckedViewer>
+          )}
+        </div>
         <CheckButton onClick={check}>이 게시글을 확인했습니다.</CheckButton>
         <ShiftMenu onClick={changeContent}>&rArr;</ShiftMenu>
       </Layout>
@@ -171,20 +199,22 @@ function ViewContainer() {
 
       <Reply>
         <ReplyWrapper>
-          {isLoading ? (
+          {replyLoading ? (
             "Loading T.T..."
           ) : !replyList.length ? (
             <h4>현재 작성된 댓글이 없습니다.</h4>
           ) : (
-            replyList.map((reply) => {
-              return (
-                <ReplyContents
-                  reply={reply}
-                  key={reply.id}
-                  replyControl={setReplyList}
-                />
-              );
-            })
+            <div>
+              {replyList.map((reply) => {
+                return (
+                  <ReplyContents
+                    reply={reply}
+                    key={reply.id}
+                    replyControl={setReplyList}
+                  />
+                );
+              })}
+            </div>
           )}
         </ReplyWrapper>
 

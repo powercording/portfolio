@@ -8,6 +8,7 @@ import { didabaraSelector, didabaraState, menuState } from "../config/Atom";
 import CreateItem from "./CreateItem";
 import ItemMenu from "./ItemMenu";
 import Skeleton from "../items/Skeleton";
+import { useEffect } from "react";
 
 const Container = styled.div`
   width: 100% - 40px;
@@ -188,6 +189,7 @@ function DocumentList({ loading }) {
   const [makeItem, setMakeItem] = useState();
   const [openMenu, setOpenMenu] = useState();
   const indicatorRef = useRef();
+  const listingRef = useRef();
   const messageRef = useRef();
   const codeRef = useRef();
   const itemRef = useRef();
@@ -199,6 +201,15 @@ function DocumentList({ loading }) {
   });
 
   const code = hasInvite?.inviteCode;
+
+  useEffect(() => {
+    if (!loading) {
+      listingRef.current.click();
+    }
+    if (loading) {
+      listingRef.current.click();
+    }
+  }, []);
 
   /**
    *
@@ -306,7 +317,7 @@ function DocumentList({ loading }) {
           <Container>
             <MenuBar>
               <List onClick={handleMenuState}>
-                <Item>Listing</Item>
+                <Item ref={listingRef}>Listing</Item>
                 <Item>Out Dated</Item>
                 <Item>All List</Item>
               </List>

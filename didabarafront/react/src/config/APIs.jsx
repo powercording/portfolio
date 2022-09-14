@@ -66,3 +66,11 @@ export const getItemReply = (id) => {
     },
   });
 };
+
+export const getCheckedList = (itemId) => {
+  return axios.get(REQUEST_ADDRESS + `checked/list/item/${itemId}`, {
+    headers: {
+      Authorization: "Bearer " + localStorage.getItem("token"),
+    },
+  });
+};
