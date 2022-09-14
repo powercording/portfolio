@@ -1,7 +1,10 @@
+import axios from "axios";
 import React, { useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { didabaraSelector, menuState } from "../config/Atom";
+import { REQUEST_ADDRESS } from "../config/APIs";
+import { didabaraSelector, didabaraState, menuState } from "../config/Atom";
 
 const Container = styled.div`
   width: 100% - 40px;
@@ -51,7 +54,7 @@ const PDF = styled.div`
   align-items: center;
 
   img {
-    width: 200px;
+    height: 125px;
     cursor: pointer;
   }
 
@@ -95,13 +98,39 @@ const Nullsign = styled.span`
 `;
 function SubscriptionList({ loading }) {
   const filteredList = useRecoilValue(didabaraSelector);
+  const setDidabara = useSetRecoilState(didabaraState);
   const setMenu = useSetRecoilState(menuState);
+  const location = useLocation();
+  const navi = useNavigate();
   const indicatorRef = useRef();
 
+  console.log(location);
   const handleMenuState = (e) => {
     setMenu(e.target.innerText);
     indicatorRef.current.style.left = e.target.offsetLeft + "px";
     indicatorRef.current.style.width = e.target.offsetWidth + "px";
+  };
+
+  const cancleSubscribtion = () => {
+    axios
+      .delete(REQUEST_ADDRESS + `subscriber/delete/${location.state.id}`, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((res) => {
+        setDidabara((prev) => {
+          const index = prev.join.findIndex(
+            (item) => item.id == location.state.id
+          );
+          console.log(prev);
+          console.log(index);
+          const beforData = [...prev.join];
+          beforData.splice(index, 1);
+          return { ...prev, join: [...beforData.splice(index, 1)] };
+        });
+        console.log(res);
+      });
   };
 
   return (
@@ -115,6 +144,7 @@ function SubscriptionList({ loading }) {
           </List>
           <List>
             <Item>Members</Item>
+            <Item onClick={cancleSubscribtion}>구독 해지</Item>
           </List>
           <Indicator ref={indicatorRef}> </Indicator>
         </MenuBar>
@@ -123,8 +153,15 @@ function SubscriptionList({ loading }) {
             filteredList.map((item, idx) => {
               // if (item.category == param.document)
               return (
-                <PDF key={idx}>
-                  <img src={item.preview} />
+                <PDF height={125} key={idx}>
+                  <img
+                    src={item.preview}
+                    onClick={() => {
+                      navi(`/dashboard/pages/${item.id}`, {
+                        state: { item: item },
+                      });
+                    }}
+                  />
 
                   <div>
                     <h4>{item.title}</h4>

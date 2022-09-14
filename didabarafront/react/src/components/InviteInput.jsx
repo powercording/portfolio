@@ -5,6 +5,7 @@ import axios from "axios";
 import { REQUEST_ADDRESS } from "../config/APIs";
 import { useSetRecoilState } from "recoil";
 import { didabaraState } from "../config/Atom";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   width: 100%;
@@ -68,8 +69,10 @@ const CloseButton = styled.button`
 function InviteInput({ setInvite }) {
   const inputRef = useRef();
   const setDidabara = useSetRecoilState(didabaraState);
+  const navi = useNavigate();
 
   const closeWindow = () => {
+    inputRef.current.value = "";
     setInvite(false);
   };
 
@@ -90,6 +93,9 @@ function InviteInput({ setInvite }) {
         setDidabara((prev) => {
           return { ...prev, join: [...res.data] };
         });
+
+        closeWindow();
+        navi("/dashboard");
       })
       .catch((err) => console.log(err));
   };

@@ -30,7 +30,7 @@ const PDF = styled.div`
   align-items: center;
 
   img {
-    width: 200px;
+    height: 125;
     cursor: pointer;
   }
 
@@ -232,7 +232,8 @@ function DocumentList({ loading }) {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       })
-      .then((res) => console.log(res));
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
   };
   /**
    *
@@ -264,6 +265,7 @@ function DocumentList({ loading }) {
    *
    * + 인디케이터 에니메이션
    */
+
   const handleMenuState = (e) => {
     setMenu(e.target.innerText);
     indicatorRef.current.style.left = e.target.offsetLeft + "px";
@@ -314,7 +316,7 @@ function DocumentList({ loading }) {
                 <Item>수정</Item>
               </List>
 
-              <Indicator ref={indicatorRef}> </Indicator>
+              <Indicator ref={indicatorRef}></Indicator>
 
               <Alert className="BOX" ref={messageRef}>
                 초대 코드가 복사되었습니다.
@@ -335,6 +337,7 @@ function DocumentList({ loading }) {
                   return (
                     <PDF key={idx}>
                       <img
+                        height={125}
                         src={item.preview}
                         onClick={() => {
                           navi(`/dashboard/pages/${item.id}`, {
@@ -388,7 +391,7 @@ function DocumentList({ loading }) {
                 </Nullbox>
               )}
               <AddItembutton onClick={openItemCreationBox}>+</AddItembutton>
-              {makeItem && <CreateItem setCreateItem={setMakeItem} />}
+              {/* {makeItem && <CreateItem setCreateItem={setMakeItem} />} */}
             </ListConatainer>
           </Container>
         </>

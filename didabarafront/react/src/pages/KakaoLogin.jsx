@@ -2,12 +2,14 @@
 
 import axios from "axios";
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { REQUEST_ADDRESS } from "../config/APIs";
 import { userState } from "../config/Atom";
 
 function KakaoLogin() {
   const setUser = useSetRecoilState(userState);
+  const navi = useNavigate();
   /**해당 페이지가 로딩되었다면 url 에 인가코드가 담기게 된다.  */
   useEffect(() => {
     /**인가코드를 추출할 변수 생성. url 주소를 가지고 있다. */
@@ -31,8 +33,8 @@ function KakaoLogin() {
           },
         })
         .then((response) => {
-          console.log(response);
           setUser(response.data);
+          navi("/");
         });
     });
   }, []);
