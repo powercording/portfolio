@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  Avatar,
-  Typography,
-  Grid,
-  Button,
-} from "@mui/material";
+import { Avatar, Typography, Grid, Button } from "@mui/material";
 import { useRecoilState } from "recoil";
 import { userState } from "../config/Atom";
 import { useNavigate } from "react-router-dom";

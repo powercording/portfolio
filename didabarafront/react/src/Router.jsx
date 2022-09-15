@@ -7,7 +7,7 @@ import KakaoLogin from "./pages/KakaoLogin";
 import EmailAuth from "./pages/EmailAuth";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { AnimatePresence } from "framer-motion";
-import { loginState, userState } from "./config/Atom";
+import { didabaraState, loginState, userState } from "./config/Atom";
 import Mypage from "./pages/Mypage";
 import PersonalInfo from "./pages/PersonalInfo";
 import NavigationBar from "./components/NavigationBar";
@@ -19,18 +19,33 @@ import CreateModal from "./components/CreateModal";
 import AvatarPickerModal from "./components/AvatarPickerModal";
 import { useQuery } from "react-query";
 import { getUserData } from "./config/APIs";
+import { getDidabara } from "./config/APIs";
 import DocumentList from "./components/DocumentList";
 import ViewContainer from "./components/ViewContainer";
+import DeleteAccount from "./pages/DeleteAccount";
+import CategoryUserList from "./components/CategoryUserList";
+import UploadedDocs from "./pages/UploadedDocs";
 import SubscriptionList from "./components/SubscriptionList";
 
 function Router() {
   const isLogin = useRecoilValue(loginState);
   const [user, setUser] = useRecoilState(userState);
+  const [didabara, setDidabara] = useRecoilState(didabaraState);
 
   const { isLoading } = useQuery("userData", getUserData, {
     refetchOnWindowFocus: false,
     retry: 0,
     onSuccess: (data) => setUser(data),
+  });
+
+  const { isLoading2 } = useQuery("didabara", getDidabara, {
+    refetchOnWindowFocus: false,
+    retry: false,
+    onSuccess: (data) => {
+      setDidabara((prev) => {
+        return { ...prev, create: data.data };
+      });
+    },
   });
 
   return (
@@ -68,15 +83,21 @@ function Router() {
               />
             </Route>
             <Route path="/dashboard/pages/:docId" element={<ViewContainer />} />
-            <Route path="/mypage" element={<Mypage />}>
-              <Route path="main" element={<MypageMain />} />
-              <Route path="personal-info" element={<PersonalInfo />} />
-              <Route path="updateimage" element={<AvatarPickerModal />} />
-              <Route path="unnamed03" element={<SubscriptionMain />} />
-            </Route>
+            <Route path="/dashboard/create" element={<CreateModal />} />
+
+            {isLoading2 ? null : (
+              <Route path="/mypage" element={<Mypage />}>
+                <Route path="main" element={<MypageMain />} />
+                <Route path="personal-info" element={<PersonalInfo />} />
+                <Route path="updateimage" element={<AvatarPickerModal />} />
+                <Route path="category-lists" element={<SubscriptionMain />} />
+                <Route path="uploaded-docs" element={<UploadedDocs />} /> 
+              </Route>
+            )}
             {/* </>
         )} */}
             <Route path="/" element={<Home />} />
+            <Route path="/deleted" element={<DeleteAccount />} />
           </Routes>
         </>
       )}
