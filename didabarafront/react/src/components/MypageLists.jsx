@@ -24,19 +24,19 @@ const list = [
     url: "/mypage/personal-info",
   },
   {
-    primaryText: "내가 만든",
-    icon: "description",
-    url: "/mypage/unnamed01",
+    primaryText: "저장소 목록",
+    icon: "folder",
+    url: "/mypage/category-lists",
   },
   {
-    primaryText: "내가 본",
+    primaryText: "업로드 문서",
+    icon: "description",
+    url: "/mypage/uploaded-docs",
+  },
+  {
+    primaryText: "읽은 문서",
     icon: "task",
     url: "/mypage/unnamed02",
-  },
-  {
-    primaryText: "참여 목록",
-    icon: "folder",
-    url: "/mypage/unnamed03",
   },
   {
     primaryText: "즐겨찾기",

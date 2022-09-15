@@ -1,8 +1,17 @@
-import { Container, Divider, Grid, Paper, Tab, Tabs, Typography } from "@mui/material";
+import {
+  Container,
+  Divider,
+  Grid,
+  Paper,
+  Tab,
+  Tabs,
+  Typography,
+} from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Box } from "@mui/system";
 import React, { useState } from "react";
 import MyCategoryList from "./MyCategoryList";
+import FollowingLists from "./FollowingLists";
 
 function SubscriptionList() {
   const [value, setValue] = useState("1");
@@ -14,9 +23,9 @@ function SubscriptionList() {
     <>
       <Container>
         <Grid style={{ margin: "3%" }}>
-          <Typography variant="h4">참여 목록</Typography>
+          <Typography variant="h4">커뮤니티 목록</Typography>
           <Typography variant="subtitle1">
-            구독하고 있는 카테고리의 목록입니다.
+            구독하고 있는 커뮤니티의 목록입니다.
           </Typography>
           <Divider style={{ marginTop: "10px" }} />
         </Grid>
@@ -31,12 +40,16 @@ function SubscriptionList() {
                   onChange={handleChange}
                   aria-label="lab API tabs example"
                 >
-                  <Tab label="내가 참여한 카테고리" value="1" />
-                  <Tab label="내가 만든 카테고리" value="2" />
+                  <Tab label="내가 참여한 커뮤니티" value="1" />
+                  <Tab label="내가 만든 커뮤니티" value="2" />
                 </TabList>
               </Box>
-              <TabPanel value="1">Item One</TabPanel>
-              <TabPanel value="2"><MyCategoryList /></TabPanel>
+              <TabPanel value="1">
+                <FollowingLists />
+              </TabPanel>
+              <TabPanel value="2">
+                <MyCategoryList />
+              </TabPanel>
             </TabContext>
           </Box>
         </Paper>
