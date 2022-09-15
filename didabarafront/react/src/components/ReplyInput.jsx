@@ -40,11 +40,12 @@ function ReplyInput({ item, setReply }) {
     e.preventDefault();
     const data = new FormData(e.target);
     console.log(data.get("content"));
+    const content = data.get("content");
 
     axios
       .post(
         REQUEST_ADDRESS + `categoryItemReply/create/page/${item}`,
-        data.get("content"),
+        { content, createDate: Date.now() },
         {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"),
@@ -53,7 +54,8 @@ function ReplyInput({ item, setReply }) {
       )
       .then((res) => {
         console.log(res);
-        setReply(res.data.resList);
+        e.target.reset();
+        setReply(res.data);
       });
   };
 

@@ -1,7 +1,17 @@
+import axios from "axios";
 import React, { useRef } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useEffect } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { didabaraSelector, menuState } from "../config/Atom";
+import { getDidabaraJoinItems, REQUEST_ADDRESS } from "../config/APIs";
+import {
+  didabaraItemState,
+  didabaraSelector,
+  didabaraState,
+  menuState,
+  myListOrJoinList,
+} from "../config/Atom";
 
 const Container = styled.div`
   width: 100% - 40px;
@@ -51,7 +61,7 @@ const PDF = styled.div`
   align-items: center;
 
   img {
-    width: 200px;
+    height: 125px;
     cursor: pointer;
   }
 
@@ -95,8 +105,19 @@ const Nullsign = styled.span`
 `;
 function SubscriptionList({ loading }) {
   const filteredList = useRecoilValue(didabaraSelector);
+  const [didabara, setDidabara] = useRecoilState(didabaraState);
+  const setDidabataItems = useSetRecoilState(didabaraItemState);
+  const setList = useSetRecoilState(myListOrJoinList);
   const setMenu = useSetRecoilState(menuState);
+  const param = useParams();
+  const location = useLocation();
+  const navi = useNavigate();
   const indicatorRef = useRef();
+  const listingRef = useRef();
+
+  const currentDocument = didabara.join.find(
+    (page) => page.id == param.document
+  );
 
   const handleMenuState = (e) => {
     setMenu(e.target.innerText);
@@ -104,17 +125,62 @@ function SubscriptionList({ loading }) {
     indicatorRef.current.style.width = e.target.offsetWidth + "px";
   };
 
+  useEffect(() => {
+    if (!loading) {
+      listingRef.current.click();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!didabara.join.length) {
+      return;
+    }
+    if (didabara?.join.length) {
+      navi(`/dashboard/publicboard/${didabara?.join[0].id}`);
+      setList(didabara.join[0].id);
+    }
+  }, []);
+
+  const cancleSubscribtion = () => {
+    const bool = window.confirm("해당 커뮤니티 구독을 취소하시겠습니까");
+
+    if (bool) {
+      axios
+        .delete(REQUEST_ADDRESS + `subscriber/delete/${location.state.id}`, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then((res) => {
+          setDidabara((prev) => {
+            return { ...prev, join: res.data };
+          });
+          getDidabaraJoinItems().then((res) => {
+            setDidabataItems(res.data.resList);
+          });
+          if (didabara?.join.length) {
+            setList(didabara.join[0].id);
+            navi(`/dashboard/publicboard/${didabara.join[0].id}`);
+          }
+          navi("/dashboard/publicboard");
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
   return (
     <>
       <Container>
+        <h1>{currentDocument?.title}</h1>
         <MenuBar>
           <List onClick={handleMenuState}>
-            <Item>Listing</Item>
+            <Item ref={listingRef}>Listing</Item>
             <Item>Out Dated</Item>
             <Item>All List</Item>
           </List>
           <List>
             <Item>Members</Item>
+            <Item onClick={cancleSubscribtion}>구독 해지</Item>
           </List>
           <Indicator ref={indicatorRef}> </Indicator>
         </MenuBar>
@@ -123,8 +189,15 @@ function SubscriptionList({ loading }) {
             filteredList.map((item, idx) => {
               // if (item.category == param.document)
               return (
-                <PDF key={idx}>
-                  <img src={item.preview} />
+                <PDF height={125} key={idx}>
+                  <img
+                    src={item.preview}
+                    onClick={() => {
+                      navi(`/dashboard/pages/${item.id}`, {
+                        state: { item: item },
+                      });
+                    }}
+                  />
 
                   <div>
                     <h4>{item.title}</h4>

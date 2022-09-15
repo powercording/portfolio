@@ -59,7 +59,7 @@ function NavigationBar() {
         }}
         fontSize="large"
         onClick={() => {
-          return user ? navi("/dashboard") : navi("/");
+          return user ? navi("/dashboard/myboard") : navi("/");
         }}
       />
 

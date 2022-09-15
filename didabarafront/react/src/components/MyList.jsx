@@ -1,5 +1,7 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useRef } from "react";
+import { useMatch, useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { myListOrJoinList } from "../config/Atom";
@@ -46,7 +48,7 @@ function MyList({ title, content, imgSrc, id }) {
   const goCategory = () => {
     console.log("getting my item list of categories...");
     setList(id);
-    navi(`/dashboard/${id}`);
+    navi(`/dashboard/myboard/${id}`);
   };
 
   return (

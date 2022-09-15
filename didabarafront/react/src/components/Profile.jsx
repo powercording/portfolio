@@ -1,8 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { Paper, Avatar } from "@mui/material";
-import axios from "axios";
-import { REQUEST_ADDRESS } from "../config/APIs";
 import { myListOrJoinList } from "../config/Atom";
 import { useSetRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
@@ -65,17 +63,11 @@ function Profile({ img, username, title, text, id }) {
   const goCategory = () => {
     console.log("getting my item list of categories...");
     setList(id);
-    navi(`/dashboard/${id}`);
-  };
-
-  const getPaper = () => {
-    axios
-      .get(REQUEST_ADDRESS + `categoryItem/list/` + id, {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-      })
-      .then((res) => console.log(res.data));
+    navi(`/dashboard/publicboard/${id}`, {
+      state: {
+        id: id,
+      },
+    });
   };
 
   return (
