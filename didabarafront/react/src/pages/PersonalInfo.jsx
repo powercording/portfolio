@@ -8,8 +8,6 @@ import {
   Typography,
   Paper,
   Divider,
-  Select,
-  InputLabel,
   FormControl,
   MenuItem,
   IconButton,
@@ -189,7 +187,7 @@ function PersonalInfo() {
     axios
       .patch(
         REQUEST_ADDRESS + "userinfo",
-        { ...user, nickname, job, phoneNumber},
+        { ...user, nickname, job, phoneNumber },
         {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"),

@@ -11,7 +11,7 @@ const Area = styled.div`
   background-color: #dcdcdc;
   padding: 2px;
   height: 100%;
-`; 
+`;
 
 function DropBox() {
   //시작
@@ -45,9 +45,9 @@ function DropBox() {
     "loading..."
   ) : (
     <Area>
-      {didabaraJoin?.join.map((list) => (
+      {didabaraJoin?.join.map((list, idx) => (
         <Profile
-          key={list.id}
+          key={idx}
           img={list.categoryProfileImageUrl}
           username={list.nickname}
           title={list.title}

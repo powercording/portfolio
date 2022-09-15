@@ -4,7 +4,6 @@ import {
   Grid,
   Paper,
   Tab,
-  Tabs,
   Typography,
 } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";

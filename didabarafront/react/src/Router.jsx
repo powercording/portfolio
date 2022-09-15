@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import DashBoard from "./pages/DashBoard";
 import Home from "./pages/Home";
 import Join from "./pages/Join";
@@ -23,7 +23,6 @@ import { getDidabara } from "./config/APIs";
 import DocumentList from "./components/DocumentList";
 import ViewContainer from "./components/ViewContainer";
 import DeleteAccount from "./pages/DeleteAccount";
-import CategoryUserList from "./components/CategoryUserList";
 import UploadedDocs from "./pages/UploadedDocs";
 import SubscriptionList from "./components/SubscriptionList";
 
@@ -56,7 +55,6 @@ function Router() {
           <NavigationBar />
           <AnimatePresence>{isLogin ? <Loginform /> : null}</AnimatePresence>
           <Routes>
-            {/* <Route path="/*" element={<Navigate to={!user && "/"} />} /> */}
             {/* {!user && (
           <> */}
             <Route path="/kakaologin" element={<KakaoLogin />} />
@@ -91,7 +89,7 @@ function Router() {
                 <Route path="personal-info" element={<PersonalInfo />} />
                 <Route path="updateimage" element={<AvatarPickerModal />} />
                 <Route path="category-lists" element={<SubscriptionMain />} />
-                <Route path="uploaded-docs" element={<UploadedDocs />} /> 
+                <Route path="uploaded-docs" element={<UploadedDocs />} />
               </Route>
             )}
             {/* </>

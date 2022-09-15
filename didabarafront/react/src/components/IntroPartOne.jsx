@@ -1,31 +1,17 @@
-import { Button, Grid } from "@mui/material";
 import React from "react";
 import styled from "styled-components";
-import InfoHardCodingText from "../items/InfoHardCodingText";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { loginState, userState } from "../config/Atom";
+import bgImg from "../static/How-to-Write-a-Scope-of-Work-Document-Board.webp";
 
 /**컴포넌트들 스타일 정의 */
-const StyledGrid = styled(Grid)`
+const StyledGrid = styled.div`
   width: 100%;
-  height: 100vh;
-  background-color: white;
-`;
-
-const StyledButton = styled(Button)`
-  && {
-    color: white;
-    font-weight: bold;
-    height: 55px;
-    background-color: orange;
-    transition: color 0.3s ease-in-out;
-    transition: background-color 0.3s ease-in-out;
-    &:hover {
-      color: black;
-      background-color: white;
-    }
-  }
+  height: calc(100% - 45px);
+  background-image: url("https://images.unsplash.com/photo-1468779036391-52341f60b55d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8cGFwZXIlMjB3b3JrfGVufDB8fDB8fA%3D%3D&w=1000&q=80");
+  background-size: cover;
+  display: flex;
 `;
 
 function IntroPartOne({ children }) {
@@ -35,22 +21,7 @@ function IntroPartOne({ children }) {
   const setLoginState = useSetRecoilState(loginState);
   const navi = useNavigate();
 
-  const handleStart = () => {
-    if (user.id !== null) {
-      navi("/dashboard");
-    } else {
-      setLoginState(true);
-    }
-  };
-
-  return (
-    <StyledGrid container justifyContent="center" gap={0}>
-      {children}
-      <StyledButton variant="contained" onClick={handleStart}>
-        지금 바로 시작해보기
-      </StyledButton>
-    </StyledGrid>
-  );
+  return <StyledGrid>{children}</StyledGrid>;
 }
 
 export default IntroPartOne;

@@ -1,15 +1,8 @@
 import { Container, Divider, Grid, Paper, Typography } from "@mui/material";
 import axios from "axios";
 import React from "react";
-import { useEffect } from "react";
 import { useRecoilValue } from "recoil";
-import { REQUEST_ADDRESS } from "../config/APIs";
-import {
-  categoryItem,
-  didabaraItemState,
-  didabaraState,
-  userState,
-} from "../config/Atom";
+import { didabaraItemState } from "../config/Atom";
 
 function UploadedDocs() {
   const didabaraItem = useRecoilValue(didabaraItemState);
