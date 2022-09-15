@@ -8,8 +8,6 @@ import {
   Typography,
   Paper,
   Divider,
-  Select,
-  InputLabel,
   FormControl,
   MenuItem,
   IconButton,
