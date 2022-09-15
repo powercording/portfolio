@@ -184,11 +184,12 @@ function PersonalInfo() {
   const updateProfile = (formData) => {
     const nickname = formData.nickname;
     const job = formData.job;
+    const phoneNumber = formData.phone_number;
 
     axios
       .patch(
         REQUEST_ADDRESS + "userinfo",
-        { ...user, nickname, job },
+        { ...user, nickname, job, phoneNumber},
         {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("token"),
@@ -354,6 +355,7 @@ function PersonalInfo() {
                 defaultValue={user.phone_number}
                 variant="standard"
                 name={user.phone_number}
+                {...register("phone_number")}
               />
               <Grid container>
                 <StyledForm
