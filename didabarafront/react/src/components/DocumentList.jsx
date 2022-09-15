@@ -1,13 +1,20 @@
 import axios from "axios";
 import React, { useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useMatch, useNavigate, useParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
-import { REQUEST_ADDRESS } from "../config/APIs";
-import { didabaraSelector, didabaraState, menuState } from "../config/Atom";
+import { getDidabaraItems, REQUEST_ADDRESS } from "../config/APIs";
+import {
+  didabaraItemState,
+  didabaraSelector,
+  didabaraState,
+  menuState,
+  myListOrJoinList,
+} from "../config/Atom";
 import CreateItem from "./CreateItem";
 import ItemMenu from "./ItemMenu";
 import Skeleton from "../items/Skeleton";
+import { useEffect } from "react";
 
 const Container = styled.div`
   width: 100% - 40px;
@@ -30,7 +37,7 @@ const PDF = styled.div`
   align-items: center;
 
   img {
-    width: 200px;
+    height: 125;
     cursor: pointer;
   }
 
@@ -185,20 +192,45 @@ function DocumentList({ loading }) {
   const setMenu = useSetRecoilState(menuState);
   const filteredList = useRecoilValue(didabaraSelector);
   const [didabara, setDidabara] = useRecoilState(didabaraState);
-  const [makeItem, setMakeItem] = useState();
+  const setList = useSetRecoilState(myListOrJoinList);
+  const setDidabaraItems = useSetRecoilState(didabaraItemState);
+  // const [makeItem, setMakeItem] = useState();
   const [openMenu, setOpenMenu] = useState();
   const indicatorRef = useRef();
+  const listingRef = useRef();
   const messageRef = useRef();
   const codeRef = useRef();
   const itemRef = useRef();
   const navi = useNavigate();
   const param = useParams();
 
+  const currentDocument = didabara.create.find(
+    (page) => page.id == param.document
+  );
+
+  console.log(currentDocument);
+
   const hasInvite = didabara?.create?.find((list) => {
     return list.id == param.document;
   });
 
   const code = hasInvite?.inviteCode;
+
+  useEffect(() => {
+    if (!loading) {
+      listingRef.current.click();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!didabara.create.length) {
+      return;
+    }
+    if (didabara?.create.length) {
+      setList(didabara.create[0].id);
+      navi(`/dashboard/myboard/${didabara?.create[0].id}`);
+    }
+  }, []);
 
   /**
    *
@@ -216,10 +248,17 @@ function DocumentList({ loading }) {
           },
         })
         .then((res) => {
-          navi("/dashboard");
           setDidabara((prev) => {
             return { ...prev, create: [...res.data.resList] };
           });
+          getDidabaraItems().then((res) => {
+            setDidabaraItems(res.data.resList);
+          });
+
+          if (didabara.create.length) {
+            setList(didabara.create[0].id);
+            navi(`/dashboard/myboard/${didabara.create[0].id}`);
+          }
         })
         .catch((err) => console.log(err));
     }
@@ -232,7 +271,8 @@ function DocumentList({ loading }) {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       })
-      .then((res) => console.log(res));
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
   };
   /**
    *
@@ -264,6 +304,7 @@ function DocumentList({ loading }) {
    *
    * + 인디케이터 에니메이션
    */
+
   const handleMenuState = (e) => {
     setMenu(e.target.innerText);
     indicatorRef.current.style.left = e.target.offsetLeft + "px";
@@ -302,9 +343,10 @@ function DocumentList({ loading }) {
       ) : (
         <>
           <Container>
+            <h1>{currentDocument?.title}</h1>
             <MenuBar>
               <List onClick={handleMenuState}>
-                <Item>Listing</Item>
+                <Item ref={listingRef}>Listing</Item>
                 <Item>Out Dated</Item>
                 <Item>All List</Item>
               </List>
@@ -314,7 +356,7 @@ function DocumentList({ loading }) {
                 <Item>수정</Item>
               </List>
 
-              <Indicator ref={indicatorRef}> </Indicator>
+              <Indicator ref={indicatorRef}></Indicator>
 
               <Alert className="BOX" ref={messageRef}>
                 초대 코드가 복사되었습니다.
@@ -335,6 +377,7 @@ function DocumentList({ loading }) {
                   return (
                     <PDF key={idx}>
                       <img
+                        height={125}
                         src={item.preview}
                         onClick={() => {
                           navi(`/dashboard/pages/${item.id}`, {
@@ -388,7 +431,7 @@ function DocumentList({ loading }) {
                 </Nullbox>
               )}
               <AddItembutton onClick={openItemCreationBox}>+</AddItembutton>
-              {makeItem && <CreateItem setCreateItem={setMakeItem} />}
+              {/* {makeItem && <CreateItem setCreateItem={setMakeItem} />} */}
             </ListConatainer>
           </Container>
         </>

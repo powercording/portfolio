@@ -4,14 +4,13 @@ import styled from "styled-components";
 import CreateModal from "../components/CreateModal";
 import ShowMyList from "../components/ShowMyList";
 import InviteInput from "../components/InviteInput";
-import DocumentList from "../components/DocumentList";
-import SubscriptionList from "../components/SubscriptionList";
 import DropBox from "../components/DropBox";
 import axios from "axios";
 import { getDidabara, REQUEST_ADDRESS } from "../config/APIs";
 import { didabaraState } from "../config/Atom";
 import { useSetRecoilState } from "recoil";
 import { useQuery } from "react-query";
+import { useNavigate, Outlet, useMatch } from "react-router-dom";
 
 const StyledButton = styled(Button)`
   && {
@@ -75,9 +74,11 @@ const Container = styled.div`
 
 function DashBoard() {
   const [makeCategory, setMakeCategory] = useState(false);
-  const [showList, setShowList] = useState(true);
   const [invite, setInvite] = useState(false);
+  const navi = useNavigate();
   const setDidabara = useSetRecoilState(didabaraState);
+  const myBoardMatch = useMatch("dashboard/myboard/*");
+  // const publicBoardMatch = useMatch("dashboard/publicboard/*");
 
   const { isLoading } = useQuery("didabara", getDidabara, {
     refetchOnWindowFocus: false,
@@ -86,17 +87,9 @@ function DashBoard() {
       setDidabara((prev) => {
         return { ...prev, create: data.data };
       });
+      navi("/dashboard/myboard");
     },
   });
-
-  const menuSelect = (e) => {
-    if (e.target.value === "myList") {
-      setShowList(true);
-    }
-    if (e.target.value === "joinList") {
-      setShowList(false);
-    }
-  };
 
   const fetche = () => {
     axios
@@ -113,20 +106,27 @@ function DashBoard() {
       <FristGrid>
         <div>
           <ButtonJoinList
-            onClick={menuSelect}
-            $mylist={showList}
+            onClick={() => {
+              navi("/dashboard/publicboard");
+            }}
+            $mylist={myBoardMatch}
             value="joinList"
           >
             구독
           </ButtonJoinList>
-          <ButtonMyList onClick={menuSelect} $mylist={showList} value="myList">
+          <ButtonMyList
+            onClick={() => {
+              navi("/dashboard/myboard");
+            }}
+            $mylist={myBoardMatch}
+          >
             나의 커뮤니티
           </ButtonMyList>
         </div>
 
-        <div>{showList ? <ShowMyList /> : <DropBox />}</div>
+        <div>{myBoardMatch ? <ShowMyList /> : <DropBox />}</div>
         <div>
-          {showList ? (
+          {myBoardMatch ? (
             <Button
               variant="contained"
               style={{ width: "100%", height: "100%" }}
@@ -152,12 +152,12 @@ function DashBoard() {
       <SecondGrid style={{ position: "relative" }}>
         {makeCategory && <CreateModal setShowing={setMakeCategory} />}
         {invite && <InviteInput setInvite={setInvite} />}
-        {/* <Outlet /> */}
-        {showList ? (
+        <Outlet />
+        {/* {showList ? (
           <DocumentList loading={isLoading} />
         ) : (
           <SubscriptionList loading={isLoading} />
-        )}
+        )} */}
       </SecondGrid>
     </Container>
   );

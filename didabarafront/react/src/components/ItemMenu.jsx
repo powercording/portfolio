@@ -30,7 +30,7 @@ const InputBox = styled.div`
   left: 0;
   border-radius: 10px;
   width: 600px;
-  height: 600px;
+
   background-color: #2f3640;
   padding: 10px;
 `;
@@ -38,10 +38,9 @@ const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
   gap: 5px;
-  padding: 20px 10px;
+  padding: 15px 10px;
 `;
 const TextArea = styled.textarea`
-  height: 120px;
   padding-left: 20px;
   border-radius: 10px;
   border: 1px solid #2f3640;
@@ -121,12 +120,31 @@ const Text = styled.span`
   font-size: 1rem;
   text-transform: uppercase;
 `;
+const StyledButton = styled.button`
+  width: 100%;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+`;
 
 function ItemMenu({ id, category }) {
   const [didabaraItems, setDidabaraItems] = useRecoilState(didabaraItemState);
   const [modifie, setModifie] = useState(false);
 
-  const sendModifie = () => {};
+  const sendModifie = (e) => {
+    e.preventDefault();
+    const data = new FormData(e.target);
+    const title = data.get("title");
+    const content = data.get("content");
+
+    axios
+      .put(REQUEST_ADDRESS + `categoryItem/update/page/${id}`, data, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((res) => console.log(res));
+  };
   const itemDrop = () => {
     const select = window.confirm("삭제하시겠습니까?");
 
@@ -159,7 +177,7 @@ function ItemMenu({ id, category }) {
       </Menu>
       {modifie && (
         <InputBox>
-          <StyledForm>
+          <StyledForm onSubmit={sendModifie}>
             <div>
               <TitleAndContent
                 type="text"
@@ -171,8 +189,21 @@ function ItemMenu({ id, category }) {
             </div>
             <div>
               <Text>아합</Text>
-              <TextArea required />
+              <TextArea
+                name="content"
+                required
+                placeholder="내용을 입력하세요"
+                rows="5"
+              />
             </div>
+            <StyledButton type="submit">수정</StyledButton>
+            <StyledButton
+              onClick={() => {
+                setModifie(false);
+              }}
+            >
+              취소
+            </StyledButton>
           </StyledForm>
         </InputBox>
       )}

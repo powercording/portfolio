@@ -21,6 +21,7 @@ import { useQuery } from "react-query";
 import { getUserData } from "./config/APIs";
 import DocumentList from "./components/DocumentList";
 import ViewContainer from "./components/ViewContainer";
+import SubscriptionList from "./components/SubscriptionList";
 
 function Router() {
   const isLogin = useRecoilValue(loginState);
@@ -40,7 +41,7 @@ function Router() {
           <NavigationBar />
           <AnimatePresence>{isLogin ? <Loginform /> : null}</AnimatePresence>
           <Routes>
-            <Route path="/*" element={<Navigate to={!user && "/"} />} />
+            {/* <Route path="/*" element={<Navigate to={!user && "/"} />} /> */}
             {/* {!user && (
           <> */}
             <Route path="/kakaologin" element={<KakaoLogin />} />
@@ -52,11 +53,21 @@ function Router() {
         {user && (
           <> */}
             <Route path="/dashboard" element={<DashBoard />}>
-              <Route path="/dashboard/:document" element={<DocumentList />} />
+              <Route
+                path="/dashboard/myboard/:document"
+                element={<DocumentList />}
+              />
+              <Route path="/dashboard/myboard/" element={<DocumentList />} />
+              <Route
+                path="/dashboard/publicboard/:document"
+                element={<SubscriptionList />}
+              />
+              <Route
+                path="/dashboard/publicboard"
+                element={<SubscriptionList />}
+              />
             </Route>
             <Route path="/dashboard/pages/:docId" element={<ViewContainer />} />
-            <Route path="/dashboard/create" element={<CreateModal />} />
-
             <Route path="/mypage" element={<Mypage />}>
               <Route path="main" element={<MypageMain />} />
               <Route path="personal-info" element={<PersonalInfo />} />
