@@ -24,7 +24,7 @@ const list = [
     url: "/mypage/personal-info",
   },
   {
-    primaryText: "저장소 목록",
+    primaryText: "커뮤니티 목록",
     icon: "folder",
     url: "/mypage/category-lists",
   },

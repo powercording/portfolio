@@ -1,4 +1,5 @@
-import { Container, Divider, Grid, Typography } from "@mui/material";
+import { Container, Divider, Grid, Paper, Typography } from "@mui/material";
+import axios from "axios";
 import React from "react";
 import { useRecoilValue } from "recoil";
 import { didabaraItemState } from "../config/Atom";
@@ -19,19 +20,31 @@ function UploadedDocs() {
       </Container>
 
       <Container>
-        <Grid container>
-          {didabaraItem.map((item, index) => {
-            return (
-              <Grid item key={index}>
-                <Grid item xs={2}>
-                  <img src={item.preview} width="150px" />
-                  {item.title}
-                  {item.content}
+        <Paper elevation={1}>
+          <Grid container>
+            {didabaraItem.map((item, index) => {
+              return (
+                <Grid item xs={2} align="center">
+                  <Grid item key={index} aligh="center">
+                    <Grid item align="center">
+                      <img src={item.preview} height="150px" width="100px" />
+                      <Grid item xs={12} align="center">
+                        <Typography variant="subtitle2" color="#2C3E50">
+                          {item.title}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12} align="center">
+                        <Typography variant="subtitle1">
+                          {item.content}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Grid>
                 </Grid>
-              </Grid>
-            );
-          })}
-        </Grid>
+              );
+            })}
+          </Grid>
+        </Paper>
       </Container>
     </>
   );

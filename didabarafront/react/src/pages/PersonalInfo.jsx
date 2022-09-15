@@ -183,7 +183,6 @@ function PersonalInfo() {
     const nickname = formData.nickname;
     const job = formData.job;
     const phoneNumber = formData.phone_number;
-    console.log("핸드폰 번호임다" + phoneNumber);
 
     axios
       .patch(

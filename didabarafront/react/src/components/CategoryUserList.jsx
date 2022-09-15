@@ -66,7 +66,7 @@ function CategoryUserList({ categoryId }) {
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell>
-                  <Avatar src={list.profileImageUrl} />
+                  <Avatar src={list.profileImageUrl + list.filename} />
                 </TableCell>
                 <TableCell>{list.nickname}</TableCell>
                 <TableCell>{list.createdDate}</TableCell>
@@ -78,9 +78,16 @@ function CategoryUserList({ categoryId }) {
   ) : (
     <>
       <Container>
-        <Grid container justifyContent="center">
-          <Grid item xs={12}>
-            <Typography variant="h4">아직 유저가 없습니다</Typography>
+        <Grid container justifyContent="center" alignItems="center" mt={8}>
+          <Grid item xs={12} align="center" mb={1}>
+            <img src="../Speech Bubble Emoji.png" width="100px" />
+          </Grid>
+          <Grid item xs={12} align="center">
+            <Typography variant="h5">아직 유저가 없습니다.</Typography>
+          </Grid>
+          <Grid item xs={12} align="center">
+            <Typography variant="subtitle1">초대 코드로 유저를 초대해 보세요.</Typography>
+            <Typography></Typography>
           </Grid>
         </Grid>
       </Container>
