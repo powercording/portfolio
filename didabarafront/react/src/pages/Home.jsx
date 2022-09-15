@@ -29,7 +29,7 @@ const MessageBox = styled.div`
   border-radius: 35px;
   padding: 35px;
   width: 40%;
-  height: 45%;
+  height: 30%;
 `;
 const Logo = styled.span`
   color: whitesmoke;
@@ -64,7 +64,8 @@ const StyledButton = styled.button`
 const Img = styled.img`
   left: 250px;
   width: 800px;
-  margin-left: 250px;
+  margin-left: 150px;
+  margin-top: 100px;
 `;
 function Home() {
   const setLoginState = useSetRecoilState(loginState);

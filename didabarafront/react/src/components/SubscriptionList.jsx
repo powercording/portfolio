@@ -50,7 +50,7 @@ const ListConatainer = styled.div`
   grid-template-columns: repeat(4, 250px);
   grid-template-rows: repeat(3, 200px);
   justify-content: center;
-  margin-top: 15px;
+  margin-top: 30px;
   gap: 10px;
 `;
 const PDF = styled.div`
