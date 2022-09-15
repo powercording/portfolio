@@ -164,13 +164,14 @@ function ViewContainer() {
   const changeContent = () => {
     setContent((prev) => !prev);
   };
+  console.log("나비", () => navi(-1));
 
   return (
     <Grid>
       <Layout>
         <StyledBottun
           onClick={() => {
-            navi(-1);
+            navi(-2);
           }}
         >
           뒤로가기

@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useRef } from "react";
 import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { getDidabaraJoinItems, REQUEST_ADDRESS } from "../config/APIs";
@@ -109,10 +109,15 @@ function SubscriptionList({ loading }) {
   const setDidabataItems = useSetRecoilState(didabaraItemState);
   const setList = useSetRecoilState(myListOrJoinList);
   const setMenu = useSetRecoilState(menuState);
+  const param = useParams();
   const location = useLocation();
   const navi = useNavigate();
   const indicatorRef = useRef();
   const listingRef = useRef();
+
+  const currentDocument = didabara.join.find(
+    (page) => page.id == param.document
+  );
 
   const handleMenuState = (e) => {
     setMenu(e.target.innerText);
@@ -166,6 +171,7 @@ function SubscriptionList({ loading }) {
   return (
     <>
       <Container>
+        <h1>{currentDocument?.title}</h1>
         <MenuBar>
           <List onClick={handleMenuState}>
             <Item ref={listingRef}>Listing</Item>

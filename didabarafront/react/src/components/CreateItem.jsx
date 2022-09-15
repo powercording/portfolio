@@ -124,7 +124,46 @@ const LoadingTwo = styled.span`
   overflow: hidden;
   animation: ${loading} 2s ease infinite;
 `;
+const InputDate = styled.input`
+  background-color: #2f3640;
+  color: #ffffff;
+  border: none;
+  outline: none;
+  height: 40px;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 10px;
 
+  &::-webkit-calendar-picker-indicator {
+    position: absolute;
+    left: 70%;
+    background-color: #ffffff;
+    padding: 10px 50px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  &::-webkit-datetime-edit-text {
+    -webkit-appearance: none;
+    /* display: none; */
+  }
+`;
+
+const InputFile = styled.input`
+  background-color: #2f3640;
+  color: #ddffdd;
+  height: 40px;
+  border-radius: 5px;
+  font-weight: bold;
+
+  &::-webkit-file-upload-button {
+    height: 40px;
+    width: 20%;
+    background-color: #ddffdd;
+    color: #2f3640;
+    border: none;
+    cursor: pointer;
+  }
+`;
 function CreateItem({ id, control }) {
   const setDidabaraItem = useSetRecoilState(didabaraItemState);
   const [fileTransfer, setFileTransfer] = useState(false);
@@ -178,10 +217,11 @@ function CreateItem({ id, control }) {
   };
   const close = () => {
     eraiseInfomation();
+    setFileTransfer(false);
     control.current.style.display = "none";
   };
   return (
-    <ModalPopUp width={"500px"} height={"650px"} Overlay={true}>
+    <ModalPopUp width={"500px"} Overlay={true}>
       <Container>
         <StyledForm onSubmit={sendCreateRequest} ref={formRef}>
           <div>
@@ -203,17 +243,18 @@ function CreateItem({ id, control }) {
             ></TitleAndContentArea>
             <Text>content here</Text>
           </div>
-          <input type="file" name="file"></input>
-          <input type="date" name="expiredDate"></input>
+          <InputFile type="file" name="file"></InputFile>
+          <span>게시 기한</span>
+          <InputDate type="date" name="expiredDate"></InputDate>
           <button type="submit">보내기</button>
         </StyledForm>
         <ClosingButton onClick={close}>X</ClosingButton>
+        {fileTransfer && (
+          <Loading>
+            <LoadingTwo>UpLoading..</LoadingTwo>
+          </Loading>
+        )}
       </Container>
-      {fileTransfer && (
-        <Loading>
-          <LoadingTwo>UpLoading..</LoadingTwo>
-        </Loading>
-      )}
     </ModalPopUp>
   );
 }
