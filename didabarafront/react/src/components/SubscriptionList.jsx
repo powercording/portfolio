@@ -5,6 +5,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { getDidabaraJoinItems, REQUEST_ADDRESS } from "../config/APIs";
+import ChatInput from "./websocket/ChatInput";
 import {
   didabaraItemState,
   didabaraSelector,
@@ -44,6 +45,25 @@ const Indicator = styled.span`
   position: absolute;
   bottom: 0px;
   transition: 0.3s;
+`;
+const Div = styled.div`
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 80% 20%;
+  top: 0;
+  z-index: 4;
+`;
+const Chat = styled.div`
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  background-color: #eeeeee;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-y: scroll;
+  overflow: hidden;
 `;
 const ListConatainer = styled.div`
   display: grid;
@@ -169,7 +189,7 @@ function SubscriptionList({ loading }) {
   };
 
   return (
-    <>
+    <Div>
       <Container>
         <h1>{currentDocument?.title}</h1>
         <MenuBar>
@@ -213,7 +233,10 @@ function SubscriptionList({ loading }) {
           )}
         </ListConatainer>
       </Container>
-    </>
+      <Chat>
+        <ChatInput id={param.document} />
+      </Chat>
+    </Div>
   );
 }
 

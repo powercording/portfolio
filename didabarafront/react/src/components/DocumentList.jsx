@@ -15,11 +15,32 @@ import CreateItem from "./CreateItem";
 import ItemMenu from "./ItemMenu";
 import Skeleton from "../items/Skeleton";
 import { useEffect } from "react";
+import ChatInput from "./websocket/ChatInput";
 
 const Container = styled.div`
   width: 100% - 40px;
   height: calc(100% -45px);
   padding: 0px 20px;
+  position: relative;
+`;
+const Chat = styled.div`
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  background-color: #eeeeee;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-y: scroll;
+  overflow: hidden;
+`;
+const Div = styled.div`
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 80% 20%;
+  top: 0;
+  z-index: 4;
 `;
 const ListConatainer = styled.div`
   display: grid;
@@ -208,7 +229,7 @@ function DocumentList({ loading }) {
     (page) => page.id == param.document
   );
 
-  console.log(currentDocument);
+  console.log(currentDocument?.id);
 
   const hasInvite = didabara?.create?.find((list) => {
     return list.id == param.document;
@@ -337,7 +358,7 @@ function DocumentList({ loading }) {
     }, 1000);
   };
   return (
-    <>
+    <Div>
       {loading ? (
         <Skeleton />
       ) : (
@@ -446,7 +467,10 @@ function DocumentList({ loading }) {
           }}
         />
       )}
-    </>
+      <Chat>
+        <ChatInput id={currentDocument?.id} />
+      </Chat>
+    </Div>
   );
 }
 export default DocumentList;
