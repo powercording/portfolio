@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -13,11 +13,13 @@ import {
   menuState,
   myListOrJoinList,
 } from "../config/Atom";
+import ModalPopUp from "./ModalPopUp";
 
 const Container = styled.div`
   width: 100% - 40px;
   height: calc(100% -45px);
   padding: 0px 20px;
+  position: relative;
 `;
 const MenuBar = styled.div`
   position: relative;
@@ -67,7 +69,7 @@ const Chat = styled.div`
 `;
 const ListConatainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 250px);
+  grid-template-columns: repeat(4, 20%);
   grid-template-rows: repeat(3, 200px);
   justify-content: center;
   margin-top: 30px;
@@ -123,12 +125,40 @@ const Nullbox = styled.div`
 const Nullsign = styled.span`
   font-size: 2rem;
 `;
+const ModalDiv = styled.div`
+  background-color: #515d6e;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #1976d2;
+  gap: 10 px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+`;
+const ModalCloseButton = styled.button`
+  width: 90%;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  margin-top: 10px;
+  color: white;
+  background-color: #2f3640;
+  cursor: pointer;
+  &:hover {
+    background-color: #ffddff;
+    color: black;
+  }
+`;
+
 function SubscriptionList({ loading }) {
   const filteredList = useRecoilValue(didabaraSelector);
   const [didabara, setDidabara] = useRecoilState(didabaraState);
   const setDidabataItems = useSetRecoilState(didabaraItemState);
-  const setList = useSetRecoilState(myListOrJoinList);
+  const [list, setList] = useRecoilState(myListOrJoinList);
   const setMenu = useSetRecoilState(menuState);
+  const [guest, setGuest] = useState([]);
   const param = useParams();
   const location = useLocation();
   const navi = useNavigate();
@@ -138,6 +168,22 @@ function SubscriptionList({ loading }) {
   const currentDocument = didabara.join.find(
     (page) => page.id == param.document
   );
+
+  const printGuestList = () => {
+    setList("M");
+
+    axios
+      .get(REQUEST_ADDRESS + `subscriber/list/${param.document}`, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((res) => {
+        setGuest(res.data);
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
+  };
 
   const handleMenuState = (e) => {
     setMenu(e.target.innerText);
@@ -199,7 +245,7 @@ function SubscriptionList({ loading }) {
             <Item>All List</Item>
           </List>
           <List>
-            <Item>Members</Item>
+            <Item onClick={printGuestList}>Members</Item>
             <Item onClick={cancleSubscribtion}>구독 해지</Item>
           </List>
           <Indicator ref={indicatorRef}> </Indicator>
@@ -230,6 +276,68 @@ function SubscriptionList({ loading }) {
             <Nullbox>
               <Nullsign>게시된 글이 존재하지 않습니다.</Nullsign>
             </Nullbox>
+          )}
+          {list === "M" && (
+            <ModalPopUp width={700} height={400}>
+              <ModalDiv>
+                <div
+                  style={{
+                    height: "10%",
+                    backgroundColor: "rgba(0,0,0,0.5)",
+                    width: "90%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <h3 style={{ color: "white" }}>현재 커뮤니티 참여 인원</h3>
+                </div>
+                <div
+                  style={{
+                    height: "70%",
+                    backgroundColor: "rgba(0,0,0,0.5)",
+                    marginTop: "10px",
+                    width: "90%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: "10px",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  {guest?.map((g) => {
+                    return (
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <img width={40} src={g.profileImageUrl + g.filename} />
+                        <span
+                          style={{
+                            color: "white",
+                            margin: "5px",
+                            fontSize: "1rem",
+                          }}
+                        >
+                          {g.nickname}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <ModalCloseButton
+                  onClick={() => {
+                    setList("Listing");
+                  }}
+                >
+                  닫기
+                </ModalCloseButton>
+              </ModalDiv>
+            </ModalPopUp>
           )}
         </ListConatainer>
       </Container>
