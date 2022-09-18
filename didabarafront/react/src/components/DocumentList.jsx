@@ -473,9 +473,9 @@ function DocumentList({ loading }) {
                   <h4 onClick={openItemCreationBox}>작성하기</h4>
                 </Nullbox>
               )}
-              {didabara?.create.length && (
+              {didabara?.create.length ? (
                 <AddItembutton onClick={openItemCreationBox}>+</AddItembutton>
-              )}
+              ) : null}
               {list === "M" && (
                 <ModalPopUp width={700} height={400}>
                   <ModalDiv>
@@ -547,7 +547,7 @@ function DocumentList({ loading }) {
           </Container>
         </>
       )}
-      <div ref={itemRef} style={{ display: "none" }}>
+      <div ref={itemRef} style={{ display: "none", position: "absolute" }}>
         <CreateItem control={itemRef} id={param.document} />
       </div>
       {openMenu && (
