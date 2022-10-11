@@ -5,6 +5,8 @@
 > ### 📞 phone : 010 2073 2223
 >
 > ### 📧 email : hateyou@kakao.com
+>
+> ### notion :  [notion](https://liberating-crawdad-487.notion.site/a10c462c9a3347ea92b79e560167a59d)
 
 <hr>
 
