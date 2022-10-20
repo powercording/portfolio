@@ -6,7 +6,7 @@
 >
 > ### 📧 email : hateyou@kakao.com
 >
-> ### notion :  [notion](https://liberating-crawdad-487.notion.site/a10c462c9a3347ea92b79e560167a59d)
+> ### notion : [notion](https://liberating-crawdad-487.notion.site/a10c462c9a3347ea92b79e560167a59d)
 
 <hr>
 
@@ -24,7 +24,7 @@
 - didabara
 
   > 문서 공유 플랫폼  
-  > [깃헙링크](https://링크)
+  > [깃헙링크](https://github.com/powercording/portfolio/tree/main/didabara)
 
 - movie streaming clone
 
